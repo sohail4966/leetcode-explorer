@@ -51,8 +51,16 @@ public class SyncService {
                 });
 
         if ("RUNNING".equals(metadata.getStatus())) {
-            log.info("Sync already in progress, skipping");
-            return;
+            if (metadata.getLastSyncedAt() == null ||
+                    metadata.getLastSyncedAt().isBefore(LocalDateTime.now().minusMinutes(30))) {
+                log.warn("Stale RUNNING status detected, resetting");
+                metadata.setStatus("FAILED");
+                metadata.setErrorMessage("Reset: stale RUNNING status from previous crash");
+                syncMetadataRepository.save(metadata);
+            } else {
+                log.info("Sync already in progress, skipping");
+                return;
+            }
         }
 
         Path repoDir = null;
