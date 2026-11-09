@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-problems-table
+      author: sohailmulla
+      changes:
+        - createTable:
+            tableName: problems
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: difficulty
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: acceptance_rate
+                  type: double
+              - column:
+                  name: link
+                  type: varchar(500)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false

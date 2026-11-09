@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-sync-metadata-table
+      author: sohailmulla
+      changes:
+        - createTable:
+            tableName: sync_metadata
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: last_commit_sha
+                  type: varchar(40)
+              - column:
+                  name: last_synced_at
+                  type: timestamp
+              - column:
+                  name: status
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: error_message
+                  type: text

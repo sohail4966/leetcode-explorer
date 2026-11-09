@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-company-problems-table
+      author: sohailmulla
+      changes:
+        - createTable:
+            tableName: company_problems
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: company_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: problem_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: frequency
+                  type: double
+              - column:
+                  name: recency
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: company_problems
+            columnNames: company_id, problem_id, recency
+            constraintName: uq_company_problem_recency
+        - addForeignKeyConstraint:
+            baseTableName: company_problems
+            baseColumnNames: company_id
+            referencedTableName: companies
+            referencedColumnNames: id
+            constraintName: fk_company_problems_company
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: company_problems
+            baseColumnNames: problem_id
+            referencedTableName: problems
+            referencedColumnNames: id
+            constraintName: fk_company_problems_problem
+            onDelete: CASCADE

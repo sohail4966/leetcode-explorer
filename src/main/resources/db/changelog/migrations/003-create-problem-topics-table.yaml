@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-problem-topics-table
+      author: sohailmulla
+      changes:
+        - createTable:
+            tableName: problem_topics
+            columns:
+              - column:
+                  name: problem_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: topic_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: problem_topics
+            columnNames: problem_id, topic_id
+            constraintName: pk_problem_topics
+        - addForeignKeyConstraint:
+            baseTableName: problem_topics
+            baseColumnNames: problem_id
+            referencedTableName: problems
+            referencedColumnNames: id
+            constraintName: fk_problem_topics_problem
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: problem_topics
+            baseColumnNames: topic_id
+            referencedTableName: topics
+            referencedColumnNames: id
+            constraintName: fk_problem_topics_topic
+            onDelete: CASCADE

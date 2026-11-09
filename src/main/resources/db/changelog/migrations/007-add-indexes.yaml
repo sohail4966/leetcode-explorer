@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-add-indexes
+      author: sohailmulla
+      changes:
+        - createIndex:
+            tableName: problems
+            indexName: idx_problems_difficulty
+            columns:
+              - column:
+                  name: difficulty
+        - createIndex:
+            tableName: company_problems
+            indexName: idx_company_problems_company_recency
+            columns:
+              - column:
+                  name: company_id
+              - column:
+                  name: recency
+        - createIndex:
+            tableName: company_problems
+            indexName: idx_company_problems_problem
+            columns:
+              - column:
+                  name: problem_id
+        - createIndex:
+            tableName: company_problems
+            indexName: idx_company_problems_frequency
+            columns:
+              - column:
+                  name: frequency
+        - sql:
+            sql: CREATE INDEX idx_problems_title_fulltext ON problems USING gin(to_tsvector('english', title))

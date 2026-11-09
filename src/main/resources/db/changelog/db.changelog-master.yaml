@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/migrations/001-create-problems-table.yaml
+  - include:
+      file: db/changelog/migrations/002-create-topics-table.yaml
+  - include:
+      file: db/changelog/migrations/003-create-problem-topics-table.yaml
+  - include:
+      file: db/changelog/migrations/004-create-companies-table.yaml
+  - include:
+      file: db/changelog/migrations/005-create-company-problems-table.yaml
+  - include:
+      file: db/changelog/migrations/006-create-sync-metadata-table.yaml
+  - include:
+      file: db/changelog/migrations/007-add-indexes.yaml
