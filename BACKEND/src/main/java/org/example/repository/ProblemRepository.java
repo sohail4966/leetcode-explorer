@@ -37,36 +37,23 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
                                  Double maxFrequency,
                                  Pageable pageable);
 
-    @Query(value = """
-            SELECT DISTINCT p.* FROM problems p
-            JOIN company_problems cp ON cp.problem_id = p.id
-            JOIN companies c ON c.id = cp.company_id
-            LEFT JOIN problem_topics pt ON pt.problem_id = p.id
-            LEFT JOIN topics t ON t.id = pt.topic_id
-            WHERE (:#{#companies == null} = true OR c.name IN :companies)
-            AND (:#{#difficulties == null} = true OR p.difficulty IN :difficulties)
-            AND (:#{#topics == null} = true OR t.name IN :topics)
-            AND (:recency IS NULL OR cp.recency = :recency)
-            AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')))
-            AND (:minFrequency IS NULL OR cp.frequency >= :minFrequency)
-            AND (:maxFrequency IS NULL OR cp.frequency <= :maxFrequency)
-            ORDER BY (SELECT MAX(cp2.frequency) FROM company_problems cp2 WHERE cp2.problem_id = p.id) DESC
-            """,
-            countQuery = """
-            SELECT COUNT(DISTINCT p.id) FROM problems p
-            JOIN company_problems cp ON cp.problem_id = p.id
-            JOIN companies c ON c.id = cp.company_id
-            LEFT JOIN problem_topics pt ON pt.problem_id = p.id
-            LEFT JOIN topics t ON t.id = pt.topic_id
-            WHERE (:#{#companies == null} = true OR c.name IN :companies)
-            AND (:#{#difficulties == null} = true OR p.difficulty IN :difficulties)
-            AND (:#{#topics == null} = true OR t.name IN :topics)
-            AND (:recency IS NULL OR cp.recency = :recency)
-            AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')))
-            AND (:minFrequency IS NULL OR cp.frequency >= :minFrequency)
-            AND (:maxFrequency IS NULL OR cp.frequency <= :maxFrequency)
-            """,
-            nativeQuery = true)
+    @Query("""
+            SELECT p FROM Problem p
+            WHERE p.id IN (
+                SELECT DISTINCT p2.id FROM Problem p2
+                JOIN p2.companyProblems cp
+                JOIN cp.company c
+                LEFT JOIN p2.topics t
+                WHERE (:companies IS NULL OR c.name IN :companies)
+                AND (:difficulties IS NULL OR p2.difficulty IN :difficulties)
+                AND (:topics IS NULL OR t.name IN :topics)
+                AND (:recency IS NULL OR cp.recency = :recency)
+                AND (:search IS NULL OR LOWER(p2.title) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))
+                AND (:minFrequency IS NULL OR cp.frequency >= :minFrequency)
+                AND (:maxFrequency IS NULL OR cp.frequency <= :maxFrequency)
+            )
+            ORDER BY (SELECT MAX(cp3.frequency) FROM CompanyProblem cp3 WHERE cp3.problem = p) DESC
+            """)
     Page<Problem> searchProblemsSortByFrequencyDesc(List<String> companies,
                                                      List<String> difficulties,
                                                      List<String> topics,
@@ -76,36 +63,23 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
                                                      Double maxFrequency,
                                                      Pageable pageable);
 
-    @Query(value = """
-            SELECT DISTINCT p.* FROM problems p
-            JOIN company_problems cp ON cp.problem_id = p.id
-            JOIN companies c ON c.id = cp.company_id
-            LEFT JOIN problem_topics pt ON pt.problem_id = p.id
-            LEFT JOIN topics t ON t.id = pt.topic_id
-            WHERE (:#{#companies == null} = true OR c.name IN :companies)
-            AND (:#{#difficulties == null} = true OR p.difficulty IN :difficulties)
-            AND (:#{#topics == null} = true OR t.name IN :topics)
-            AND (:recency IS NULL OR cp.recency = :recency)
-            AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')))
-            AND (:minFrequency IS NULL OR cp.frequency >= :minFrequency)
-            AND (:maxFrequency IS NULL OR cp.frequency <= :maxFrequency)
-            ORDER BY (SELECT MAX(cp2.frequency) FROM company_problems cp2 WHERE cp2.problem_id = p.id) ASC
-            """,
-            countQuery = """
-            SELECT COUNT(DISTINCT p.id) FROM problems p
-            JOIN company_problems cp ON cp.problem_id = p.id
-            JOIN companies c ON c.id = cp.company_id
-            LEFT JOIN problem_topics pt ON pt.problem_id = p.id
-            LEFT JOIN topics t ON t.id = pt.topic_id
-            WHERE (:#{#companies == null} = true OR c.name IN :companies)
-            AND (:#{#difficulties == null} = true OR p.difficulty IN :difficulties)
-            AND (:#{#topics == null} = true OR t.name IN :topics)
-            AND (:recency IS NULL OR cp.recency = :recency)
-            AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')))
-            AND (:minFrequency IS NULL OR cp.frequency >= :minFrequency)
-            AND (:maxFrequency IS NULL OR cp.frequency <= :maxFrequency)
-            """,
-            nativeQuery = true)
+    @Query("""
+            SELECT p FROM Problem p
+            WHERE p.id IN (
+                SELECT DISTINCT p2.id FROM Problem p2
+                JOIN p2.companyProblems cp
+                JOIN cp.company c
+                LEFT JOIN p2.topics t
+                WHERE (:companies IS NULL OR c.name IN :companies)
+                AND (:difficulties IS NULL OR p2.difficulty IN :difficulties)
+                AND (:topics IS NULL OR t.name IN :topics)
+                AND (:recency IS NULL OR cp.recency = :recency)
+                AND (:search IS NULL OR LOWER(p2.title) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))
+                AND (:minFrequency IS NULL OR cp.frequency >= :minFrequency)
+                AND (:maxFrequency IS NULL OR cp.frequency <= :maxFrequency)
+            )
+            ORDER BY (SELECT MAX(cp3.frequency) FROM CompanyProblem cp3 WHERE cp3.problem = p) ASC
+            """)
     Page<Problem> searchProblemsSortByFrequencyAsc(List<String> companies,
                                                     List<String> difficulties,
                                                     List<String> topics,
