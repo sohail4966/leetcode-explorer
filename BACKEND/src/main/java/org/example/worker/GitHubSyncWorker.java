@@ -29,8 +29,8 @@ public class GitHubSyncWorker {
         if (!syncConfig.isEnabled()) return;
         var status = syncService.getStatus();
         if (status == null || status.getLastCommitSha() == null) {
-            log.info("First run detected, triggering initial sync");
-            syncService.sync();
+            log.info("First run detected, triggering initial sync in background");
+            new Thread(() -> syncService.sync(), "initial-sync").start();
         }
     }
 
